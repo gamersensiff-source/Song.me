@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Special Message by Arpit — Final</title>
+<style>
+  :root{ --pink1:#ff4ec4; --pink2:#ff77e9; --gold:#ffcc00; --bg1:#0f0a1c; --bg2:#3a0e66; }
+
+  html,body{ height:100%; margin:0; font-family:Arial, Helvetica, sans-serif; }
+
+  body{
+    background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg1) 100%);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    overflow:hidden;
+    position:relative;
+    text-align:center;
+  }
+
+  .section{
+    position:absolute;
+    width:90%;
+    max-width:700px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    opacity:0;
+    transition: transform 0.9s ease, opacity 0.9s ease;
+    pointer-events:none;
+  }
+  .section.active{
+    transform:translateX(-50%) translateY(0);
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  #intro{
+    top:40%;
+    z-index:99999;
+  }
+
+  #play-btn{
+    display:inline-block;
+    padding:16px 44px;
+    font-size:2.2rem;
+    font-weight:700;
+    color:#fff;
+    background:linear-gradient(135deg,var(--pink1),var(--pink2));
+    border:0;
+    border-radius:50px;
+    cursor:pointer;
+    box-shadow:0 8px 30px rgba(255,77,171,0.18);
+    transition: transform .18s;
+  }
+  #play-btn:hover{ transform:scale(1.06); }
+
+  #img-box{ top:8vh; }
+  #lyric-image{
+    width:90px; height:90px; border-radius:12px; object-fit:cover;
+    opacity:0; transition:opacity .8s ease;
+  }
+  .image-visible{ opacity:1; }
+
+  #lyric{
+    top:58%;
+    font-size:2.4rem;
+    line-height:1.2;
+    min-height:3rem;
+  }
+
+  .fade-out{ opacity:0 !important; transform:translateX(-50%) translateY(-12px) !important; }
+  .fade-in{ opacity:1 !important; transform:translateX(-50%) translateY(0) !important; }
+
+  .music-break{
+    font-size:3rem !important; color:#00ffff !important;
+    animation: pulse 1.5s infinite alternate;
+  }
+  @keyframes pulse{ from{ transform:scale(1)} to{ transform:scale(1.05)} }
+
+  #final{ top:40%; z-index:7; }
+  #final img{ width:170px; border-radius:12px; }
+  #final p{ margin-top:10px; color:#ccc; }
+
+  .floating-container{
+    position:absolute; inset:0; pointer-events:none;
+  }
+  .floating-particle{
+    position:absolute; bottom:-20px; font-size:1.6rem; opacity:0;
+    animation: floatUp 7.5s linear forwards;
+  }
+  @keyframes floatUp {
+    0%{ transform: translateY(0) scale(.6); opacity:0; }
+    15%{ opacity:1; }
+    100%{ opacity:0; transform: translateY(-110vh) scale(1.2); }
+  }
+</style>
+</head>
+<body>
+
+  <audio id="song" src="song.mp3" preload="auto"></audio>
+
+  <div id="intro" class="section active">
+    <button id="play-btn">Let's Play</button>
+  </div>
+
+  <div id="img-box" class="section">
+    <img id="lyric-image" src="">
+  </div>
+
+  <div id="lyric" class="section"></div>
+
+  <div id="final" class="section">
+    <img src="https://i.ibb.co/7xZbwCny/552924c5d913f43785c58e07371f8e53.jpg">
+    <p>Edit by Arpit</p>
+  </div>
+
+  <div id="particles" class="floating-container"></div>
+
+<script>
+const lyricsData = [
+  { text: "चार चराग तेरे बलन हमेशा", image: "https://i.imgur.com/XqT2tJz.png", time:4500 },
+  { text: " ", image: "", time:2000 },
+  { text: "चार चराग तेरे बलन हमेशा", image: "https://i.imgur.com/8Qj9M0n.png", time:3500 },
+  { text: "चार चराग तेरे बलन हमेशा", image: "", time:4000 },
+  { text: "पंजुवां मैं बालन आई हूँ भला झूले लालन", image: "https://i.imgur.com/XqT2tJz.png", time:4000 },
+  { text: "ओ पंजुवां मैं बालन", image: "", time:3500 },
+  { text: "MUSIC", image: "", isMusicBreak:true, time:3000 },
+  { text: "पंजुवां मैं बालन आई हूँ भला झूले लालन", image: "https://i.imgur.com/8Qj9M0n.png", time:3000 },
+  { text: "सिंधड़ी दा, सेहवन दा सखी शाहबाज़ कलंदर", image: "", time:8000 }
+];
+
+const song = document.getElementById('song');
+const playBtn = document.getElementById('play-btn');
+const intro = document.getElementById('intro');
+const lyricEl = document.getElementById('lyric');
+const imgEl = document.getElementById('lyric-image');
+const imgBox = document.getElementById('img-box');
+const final = document.getElementById('final');
+const particles = document.getElementById('particles');
+
+let idx = 0;
+let particleInterval = null;
+
+function createParticle(){
+  const chars=['❤️','🎵','🦋','✨','💖'];
+  const span=document.createElement('span');
+  span.className='floating-particle';
+  span.textContent=chars[Math.floor(Math.random()*chars.length)];
+  span.style.left=(Math.random()*92)+'vw';
+  particles.appendChild(span);
+  span.addEventListener('animationend',()=>span.remove());
+}
+
+function startParticles(){
+  createParticle();
+  particleInterval=setInterval(createParticle,700);
+}
+
+function showNext(){
+  if(idx>=lyricsData.length){
+    lyricEl.classList.remove('fade-in'); 
+    lyricEl.classList.add('fade-out');
+    imgEl.classList.remove('image-visible');
+    song.pause();
+    clearInterval(particleInterval);
+
+    setTimeout(()=>{
+      lyricEl.classList.remove('active');
+      imgBox.classList.remove('active');
+      final.classList.add('active');
+    },900);
+    return;
+  }
+
+  const item=lyricsData[idx];
+
+  lyricEl.classList.remove('fade-in');
+  lyricEl.classList.add('fade-out');
+  imgEl.classList.remove('image-visible');
+
+  setTimeout(()=>{
+    lyricEl.textContent=item.text||'';
+
+    if(item.isMusicBreak) lyricEl.classList.add('music-break');
+    else lyricEl.classList.remove('music-break');
+
+    if(item.image){
+      imgEl.src=item.image;
+      imgEl.classList.add('image-visible');
+    } else {
+      imgEl.src='';
+    }
+
+    lyricEl.classList.remove('fade-out');
+    lyricEl.classList.add('fade-in');
+
+    idx++;
+    setTimeout(showNext,item.time||3000);
+
+  },900);
+}
+
+playBtn.addEventListener('click',()=>{
+  playBtn.disabled=true;
+  intro.classList.remove('active');
+
+  song.play(); // DIRECT PLAY – popup removed
+
+  setTimeout(()=>{
+    lyricEl.classList.add('active');
+    imgBox.classList.add('active');
+    startParticles();
+    setTimeout(showNext,1400);
+  },900);
+});
+</script>
+
+</body>
+</html>
